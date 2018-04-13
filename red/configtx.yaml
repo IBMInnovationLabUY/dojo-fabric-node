@@ -1,0 +1,101 @@
+---
+Profiles:
+
+    OrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            ConsorcioVTC:
+                Organizations:
+                    - *Org1Fabricas
+                    - *Org2Transportes
+                    - *Org3Distribuidores
+                    
+                    
+    VTCChannel:
+        Consortium: ConsorcioVTC
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                    - *Org1Fabricas
+                    - *Org2Transportes
+                    - *Org3Distribuidores
+                
+    VCChannel:
+        Consortium: ConsorcioVTC
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                    - *Org1Fabricas
+                    - *Org3Distribuidores
+                              
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+
+        ID: OrdererMSP
+
+        MSPDir: ./fabric-ca-client/orderer/msp
+
+    - &Org1Fabricas
+        Name: Org1FabricasMSP
+
+        ID: Org1FabricasMSP
+
+        MSPDir: ./fabric-ca-client/peer_fabricas/msp
+
+        AnchorPeers:
+            - Host: peer0.org1.example.com
+              Port: 7051
+
+    - &Org2Transportes
+        Name: Org2TransportesMSP
+
+        ID: Org2TransportesMSP
+
+        MSPDir: ./fabric-ca-client/peer_transportes/msp
+
+        AnchorPeers:
+            - Host: peer0.org2.example.com
+              Port: 7051
+
+    - &Org3Distribuidores
+        Name: Org3DistribuidoresMSP
+
+        ID: Org3DistribuidoresMSP
+
+        MSPDir: ./fabric-ca-client/peer_distribuidores/msp
+
+        AnchorPeers:
+            - Host: peer0.org3.example.com
+              Port: 7051
+
+Orderer: &OrdererDefaults
+
+    OrdererType: solo
+
+    Addresses:
+        - orderer.example.com:7050
+
+    BatchTimeout: 2s
+
+    BatchSize:
+
+        MaxMessageCount: 10
+
+        AbsoluteMaxBytes: 99 MB
+
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+
+    Organizations:
+
+Application: &ApplicationDefaults
+
+    Organizations:

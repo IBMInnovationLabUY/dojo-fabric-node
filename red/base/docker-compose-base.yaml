@@ -1,0 +1,81 @@
+version: '2'
+
+services:
+
+  orderer.example.com:
+    # ---CHANGED--- The container name is a copy of the orderer name
+    container_name: orderer.example.com
+    image: hyperledger/fabric-orderer:x86_64-1.1.0
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=false
+      # ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      # ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      # ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../fabric-ca-client/orderer/msp:/var/hyperledger/orderer/msp
+    ports:
+      - 7050:7050
+
+  peer0.org1.example.com:
+    container_name: peer0.org1.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org1.example.com
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.example.com:7051      
+      - CORE_PEER_LOCALMSPID=Org1FabricasMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../fabric-ca-client/peer_fabricas/msp:/etc/hyperledger/fabric/msp
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer0.org2.example.com:
+    container_name: peer0.org2.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org2.example.com
+      - CORE_PEER_ADDRESS=peer0.org2.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org2TransportesMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../fabric-ca-client/peer_transportes/msp:/etc/hyperledger/fabric/msp
+    ports:
+      - 8051:7051
+      - 8053:7053
+      
+  peer0.org3.example.com:
+    container_name: peer0.org3.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org3.example.com
+      - CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.example.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3DistribuidoresMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../fabric-ca-client/peer_distribuidores/msp:/etc/hyperledger/fabric/msp
+    ports:
+      - 9051:7051
+      - 9053:7053
