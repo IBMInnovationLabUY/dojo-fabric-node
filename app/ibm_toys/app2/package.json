@@ -1,0 +1,16 @@
+{
+  "name": "ibm_toys",
+  "version": "1.0.0",
+  "description": "Aplicacion para IBM Toys en la red blockchain del Dojo",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marcos Macedo",
+  "dependencies": {
+    "fabric-ca-client": "1.1.0",
+    "fabric-client": "1.1.0",
+    "fs": "0.0.1-security",
+    "prompt": "^1.0.0"
+  }
+}

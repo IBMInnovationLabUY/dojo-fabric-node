@@ -41,7 +41,7 @@ Organizations:
         MSPDir: ./fabric-ca-client/orderer/msp
 
     - &Org1Fabricas
-        Name: Org1FabricasMSP
+        Name: Org1Fabricas
 
         ID: Org1FabricasMSP
 
@@ -52,7 +52,7 @@ Organizations:
               Port: 7051
 
     - &Org2Transportes
-        Name: Org2TransportesMSP
+        Name: Org2Transportes
 
         ID: Org2TransportesMSP
 
@@ -63,7 +63,7 @@ Organizations:
               Port: 7051
 
     - &Org3Distribuidores
-        Name: Org3DistribuidoresMSP
+        Name: Org3Distribuidores
 
         ID: Org3DistribuidoresMSP
 

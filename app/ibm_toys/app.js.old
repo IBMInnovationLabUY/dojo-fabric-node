@@ -1,0 +1,55 @@
+var prompt = require('prompt');
+var fc = require('fabric-client');
+var fca = require('fabric-ca-client');
+
+//Configuraciones
+fca_client_config = {"protocol":"HTTPS", "hostname":"fabric-ca","port":7054};
+function invokeTransaction(channel, transaction){
+
+
+}
+
+function createChannelArch()
+{
+    //Un canal captura la informacion de la red de fabric (peers, orderers, msp) del lado del cliente en el contexto de un canal
+    client = new Client();
+    channel = new Channel("vtcchannel",client);
+
+}
+
+function returnDefaultEnroll(){
+    //Si el usuario no esta enrollado, enrollar en Fabric CA y guardar su identidad
+    prompt.start();
+
+//
+// Get two properties from the user: username and email
+//
+prompt.get(['id_destino', 'descripcion'], function (err, result) {
+  //
+  // Log the results.
+  //
+  console.log('Command-line input received:');
+  console.log('  username: ' + result.username);
+  console.log('  email: ' + result.email);
+});
+
+}
+
+async function doFabricCAEnroll(enrollmendID, enrollmentSecret){
+
+    //Creamos un cliente que permite interactuar con Fabric CA
+    fcaClient = new FabricCAClient(fca_client_config);
+    let response;
+
+    try{
+    //Se comunica con Fabric CA para hacer en enroll de un cliente registrado previamente
+    response = await fca.enroll(enrollmentID, enrollmentSecret);
+    }catch(error){
+        console.log("Error en el enroll de la identidad: "+error);
+    }
+
+    //Aca se deberían guardar en disco los archivos
+
+    return response;
+    
+}

@@ -1,0 +1,102 @@
+name: "network"
+version: "1.0"
+
+channels:
+  vtcchannel:
+    orderers:
+      - orderer.example.com
+    peers:
+      peer0.org1.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      # peer0.org2.example.com:
+      #   endorsingPeer: true
+      #   chaincodeQuery: false
+      #   ledgerQuery: true
+      #   eventSource: false
+      # peer0.org3.example.com:
+      #   endorsingPeer: true
+      #   chaincodeQuery: false
+      #   ledgerQuery: true
+      #   eventSource: false
+  # vcchannel:
+  #   orderers:
+  #     - orderer.example.com
+  #   peers:
+  #     peer0.org1.example.com:
+  #       endorsingPeer: true
+  #       chaincodeQuery: true
+  #       ledgerQuery: true
+  #       eventSource: true
+  #     peer0.org3.example.com:
+  #       endorsingPeer: true
+  #       chaincodeQuery: true
+  #       ledgerQuery: true
+  #       eventSource: false
+
+organizations:
+  Org1Fabricas:
+    mspid: Org1FabricasMSP
+    peers:
+      - peer0.org1.example.com
+    certificateAuthorities:
+      - ca-consorcio
+    adminPrivateKey:
+      path: ../../red/fabric-ca-client/nadmin/msp/keystore/4602ff258f4a030f41b116fe470e5ceaa314ff719cbcf07365f0c375aef9a53b_sk
+    signedCert:
+      path: ../../red/fabric-ca-client/nadmin/msp/signcerts/cert.pem
+  # Org2Transportes:
+  #   mspid: Org2TransportesMSP
+  #   peers:
+  #     - peer0.org2.example.com
+  #   certificateAuthorities:
+  #     - ca-consorcio
+  #   adminPrivateKey:
+  #     path: ../../red/fabric-ca-client/nadmin/msp/keystore/4602ff258f4a030f41b116fe470e5ceaa314ff719cbcf07365f0c375aef9a53b_sk
+  #   signedCert:
+  #     path: ../../red/fabric-ca-client/nadmin/msp/signcerts/cert.pem
+  # Org3Distribuidores:
+  #   mspid: Org3DistribuidoresMSP
+  #   peers:
+  #     - peer0.org3.example.com
+  #   certificateAuthorities:
+  #     - ca-consorcio
+  #   adminPrivateKey:
+  #     path: ../../red/fabric-ca-client/nadmin/msp/keystore/4602ff258f4a030f41b116fe470e5ceaa314ff719cbcf07365f0c375aef9a53b_sk
+  #   signedCert:
+  #     path: ../../red/fabric-ca-client/nadmin/msp/signcerts/cert.pem
+orderers:
+  orderer.example.com:
+    url: grpc://172.19.0.2:7050
+  grpcOptions:
+      grpc.keepalive_time_ms: 600000
+
+peers:
+  peer0.org1.example.com:
+    url: "grpc://172.19.0.3:7051"
+    eventUrl: "grpc://peer0.org1.example.com:7053"
+    grpcOptions:
+      grpc.keepalive_time_ms: 600000
+
+  # peer0.org2.example.com:
+  #   url: "grpc://peer0.org2.example.com:7051"
+  #   eventUrl: "grpc://peer0.org2.example.com:7053"
+
+  # peer0.org3.example.com:
+  #   url: "grpc://peer0.org3.example.com:7051"
+  #   eventUrl: grpc://peer0.org3.example.com:7053
+
+certificateAuthorities:
+  ca-consorcio:
+    url: "http://172.19.0.10:7054"
+    httpOptions:
+      verify: false
+    #tlsCACerts:
+    #  path: test/fixtures/channel/crypto-config/peerOrganizations/org1.example.com/ca/org1.example.com-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    caName: ca-consorcio
+

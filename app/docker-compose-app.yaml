@@ -1,0 +1,17 @@
+version: '2'
+
+networks:
+  basic:
+
+services:
+
+  blockchain-apps:
+    image: blockchain_apps:latest
+    tty : true
+    container_name: blockchain_apps
+    volumes:
+        - "/bin/:/bin/"
+        - "./ibm_toys:/usr/var/apps/ibm_toys"
+        - "./pepe_asociados:/usr/var/apps/pepe_asociados"
+    networks:
+      - basic
