@@ -10,6 +10,8 @@ services:
       file:   base/docker-compose-base.yaml
       service: orderer.example.com
     container_name: orderer.example.com
+    volumes:
+      - /var/hyperledger/orderer:/var/hyperledger/production
     networks:
       - basic
 
@@ -18,6 +20,9 @@ services:
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.org1.example.com
+    #Este volumen permite persistir el ledger y las configuraciones
+    volumes:
+      - /var/hyperledger/peer0org1:/var/hyperledger/production
     networks:
       - basic
 
@@ -26,6 +31,8 @@ services:
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.org2.example.com
+    volumes:
+      - /var/hyperledger/peer0org2:/var/hyperledger/production
     networks:
       - basic
 
@@ -34,6 +41,8 @@ services:
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.org3.example.com
+    volumes:
+      - /var/hyperledger/peer0org3:/var/hyperledger/production
     networks:
       - basic
 
@@ -57,7 +66,6 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     volumes:
         - /var/run/:/host/var/run/
-        # ---CHANGED--- chaincode path adjusted
         - ./chaincode/:/opt/gopath/src/github.com/chaincode
         - ./fabric-ca-client:/opt/gopath/src/github.com/hyperledger/fabric/ca-client
         - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/channel-artifacts

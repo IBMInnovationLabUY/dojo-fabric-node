@@ -1,13 +1,14 @@
 let hfc = require('fabric-client');
 let ca = require('fabric-ca-client');
+let prompt = require('prompt');
 
 /******************************************************************************
  * Esta aplicación permite usar una identidad ya existente en el KeyValueStore
- * para ejecutar la transacción de crearContenedor
+ * para ejecutar la transacción de crearContenedor en el chaincode vtc_chaincode
  *****************************************************************************
  * Opciones de configuración
  * ***************************************************************************/
-let enrollID = "nadmin";
+let enrollID = "ibmtoys";
 /*****************************************************************************/
 
 //Tiene la configuracion del lado de la red de fabric
@@ -37,149 +38,53 @@ client.initCredentialStores().then((nothing) => {
 
             let channel = client.getChannel("vtcchannel");
             let tx_id = client.newTransactionID();
-            //Obtiene los peers de la organización a la que pertenece el cliente
+            //Obtiene los peers de la organización a la que pertenece el cliente (En este caso peer0)
             let peers = client.getPeersForOrg();
 
-            var txproposal = {
-                targets: peers,
-                chaincodeId: 'vtc_chaincode',
-                fcn: 'crearContenedor',
-                args: ['Hola', 'sdf', '3434'],
-                txId: tx_id
-            };
-
-            //Enviamos la propuesta de transacción
-            console.log("Enviando propuesta de transacción..")
-            channel.sendTransactionProposal(txproposal)
-                .then((txresults) => {
-
-                   /* //Creamos un nuevo MSP en el canal
-                    let mspMgr = channel.getMSPManager();
-
-                    //Creamos identidades para los rootcerts
-                    let idEnrolledRole = {name : "member", mspId : "Org1FabricasMSP"}
-                    let rootcerts = [{role : idEnrolledRole, 
-                        OrganizationUnit: "org1.fabricas",
-                        Identity : userInContext.getIdentity(),
-                        signer : userInContext.getSigningIdentity(),
-                        id : "Org1FabricasMSP",
-                        orgs : }];
-
-                    let mspConfig = {rootCerts: };
-
-                    let mspInstance = mspMgr.addMSP(mspConfig); 
-                    
-                    //Verificamos las firmas
-                    let arrayProposalResponses = txresults[0];
-
-                    for (var i = 0; i < arrayProposalResponses.length; i++) {
-                        console.log(arrayProposalResponses[i]);
-                        console.log("Resultado: " + channel.verifyProposalResponse(arrayProposalResponses[i]));
-                    }*/
-
-                    var txrequest = {
-                        proposalResponses: txresults[0],
-                        proposal: txresults[1]
-                    };
-
-                    console.log("Enviando los resultados de la propusta al orderer..");
-                    channel.sendTransaction(txrequest)
-                        .then((executed) => {
-                            console.log("Se envio al orderer! Imprimiendo respuesta..");
-                            console.log(executed)
-                        });
-
-                });
+            //Preguntamos por los datos para la transacción
+            console.log("****************************************************");
+            console.log("****Por favor ingrese los datos para el contenedor**");
+            console.log("****************************************************");
+            prompt.start();
+            prompt.get(['descripcion', 'empresaOrigen','empresaDestino'], function (err, result) {
+              
+                var txproposal = {
+                    targets: peers,
+                    chaincodeId: 'vtc_chaincode',
+                    fcn: 'crearContenedor',
+                    args: [result.descripcion, result.empresaOrigen, result.empresaDestino],
+                    txId: tx_id
+                };
+    
+                //Enviamos la propuesta de transacción al peer0 de la Org1Fabricas
+                console.log("Enviando propuesta de transacción..\n")
+                channel.sendTransactionProposal(txproposal)
+                    .then((txresults) => {
+    
+                        console.log("Resultado de la simulación en el peer de Org1Fabricas:");
+                        console.log(txresults[0][0].response.payload.toString("utf-8")+"\n");
+                        console.log("Firmada por:")
+                        console.log(txresults[0][0].endorsement.endorser.toString("utf-8"));
+    
+                        var txrequest = {
+                            proposalResponses: txresults[0],
+                            proposal: txresults[1]
+                        };
+    
+                        console.log("Enviando los resultados de la propuesta al orderer..");
+                        channel.sendTransaction(txrequest)
+                            .then((executed) => {
+                                console.log("Se envio al orderer! Imprimiendo respuesta..");
+                                console.log(executed.status)
+                            });
+    
+                    });
+            
+            
+            });
 
         });
 
     });
 
-    /* //Enrollamos y generamos un contexto para el usuario
-    client.setUserContext({ username: 'admin', password: 'adminpw' })
-        .then((admin) => {
-            let ca = client.getCertificateAuthority();
-            let channel = client.getChannel();
-
-
-            let peers = client.getPeersForOrg();
-
-            let ids = ca.newIdentityService();
-            let usuario_reg = "app_test20";
-            let id_request = { enrollmentID: usuario_reg, affiliation: "org1.fabricas", type: "client", enrollmentSecret: "app_test1" };
-
-            console.log("intentato registrar..")
-            ids.create(id_request, admin).then((secret) => {
-            console.log("indentidad registrada");
-
-                let urequest = {
-                    enrollmentID: usuario_reg,
-                    enrollmentSecret: secret
-                };
-
-                //Usamos la identidad del administrador para enrollar ibm_toys
-                console.log("Intentando enrollar");
-                ca.enroll(urequest)
-                    .then((enrollment) => {
-                        console.log("Se enrollo la identidad "+usuario_reg);
-                        //Crear un usuario con el material obtenido
-                        let crypto = { privateKeyPEM: enrollment.key.toBytes(), signedCertPEM: enrollment.certificate };
-                        
-                        client.createUser({username: usuario_reg, mspid: "Org1FabricasMSP", cryptoContent: crypto, skipPersistence: false }).then((createdUser) => {
-                            
-
-                        //Ponemos el usuario en el nuevo contexto
-                        console.log("Intentando crear el contexto");
-                        console.log(createdUser.getName());
-                        client.setUserContext(createdUser).then(() => {
-
-                            let tx_id = client.newTransactionID();
-                            console.log(tx_id);
-
-                            var txproposal = {
-                                targets: peers,
-                                chaincodeId: 'vtc_chaincode',
-                                fcn: 'crearContenedor',
-                                args: ['Hola', 'sdf', '3434'],
-                                txId: tx_id
-                            };
-
-                        channel.sendTransactionProposal(txproposal)
-                                .then((txresults) => {
-                                    console.log("llegue aca!");
-                                    //console.log(txresults);
-
-                                    //Verify signatires
-                                    let arrayProposalResponses = txresults[0];
-
-                                    for(var i=0; i<arrayProposalResponses.length; i++){
-                                        console.log(arrayProposalResponses[i]);
-                                        console.log("Resultado: "+channel.verifyProposalResponse(arrayProposalResponses[i]));
-                                    }
-
-                                    
-
-                                    var txrequest = {
-                                        proposalResponses: txresults[0],
-                                        proposal: txresults[1]
-                                    };
-
-                                    console.log("Enviando al orderer!!");
-                                    channel.sendTransaction(txrequest)
-                                        .then((executed) => {
-                                            console.log("Se envio al orderer!!");
-                                            console.log(executed)
-                                        });
-
-                                });
-
-                        });
-
-                        });
-
-                    });
-
-            });
-
-        }); */
 });

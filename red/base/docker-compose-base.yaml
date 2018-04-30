@@ -3,7 +3,6 @@ version: '2'
 services:
 
   orderer.example.com:
-    # ---CHANGED--- The container name is a copy of the orderer name
     container_name: orderer.example.com
     image: hyperledger/fabric-orderer:x86_64-1.1.0
     environment:
