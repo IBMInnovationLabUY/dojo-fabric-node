@@ -34,7 +34,7 @@ peers:
   peer0.org1.example.com:
     #Reemplazar con la IP asignada al contenedor de docker
     url: "grpc://172.19.0.5:7051"
-    eventUrl: "grpc://peer0.org1.example.com:7053"
+    eventUrl: "grpc://172.19.0.5:7053"
     grpcOptions:
       grpc.keepalive_time_ms: 600000
 
