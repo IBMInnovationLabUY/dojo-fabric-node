@@ -9,10 +9,13 @@ services:
       - ORDERER_GENERAL_LOGLEVEL=debug
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
+      # El bloque genesis generado previamente
       - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      # El Id del MSP que se va a utilizar
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      # El directorio donde se encuentran los archivos del MSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-      # enabled TLS
+      # disabled TLS
       - ORDERER_GENERAL_TLS_ENABLED=false
       # ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       # ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
@@ -33,6 +36,7 @@ services:
     environment:
       - CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+      # Esto es para la comunicación entre organizaciones, para mas información ver Fabric gossip protocol
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.example.com:7051      
       - CORE_PEER_LOCALMSPID=Org1FabricasMSP
