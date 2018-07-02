@@ -1,0 +1,19 @@
+{
+	"name": "vc_chaincode",
+	"version": "1.0.0",
+	"description": "Chaincode para la red de comprador-vendedor",
+	"engines": {
+		"node": ">=8.4.0",
+		"npm": ">=5.3.0"
+	},
+	"scripts": {
+		"start": "node chaincode_vc.js"
+	},
+	"engine-strict": true,
+	"engineStrict": true,
+	"license": "Apache-2.0",
+	"dependencies": {
+		"fabric-shim": "1.1.0-alpha",
+		"uuid": "^3.2.1"
+	}
+}

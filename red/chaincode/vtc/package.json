@@ -1,0 +1,19 @@
+{
+	"name": "vtc_chaincode",
+	"version": "1.0.0",
+	"description": "Chaincode para la red de comprador-transportista-vendedor",
+	"engines": {
+		"node": ">=8.4.0",
+		"npm": ">=5.3.0"
+	},
+	"scripts": {
+		"start": "node chaincode_vtc.js"
+	},
+	"engine-strict": true,
+	"engineStrict": true,
+	"license": "Apache-2.0",
+	"dependencies": {
+		"fabric-shim": "1.1.0-alpha",
+		"uuid": "^3.2.1"
+	}
+}
